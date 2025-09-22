@@ -1,7 +1,7 @@
 {
   "name": "api-prova",
   "version": "1.0.0",
-  "description": "",
+  "description": "Desenvolvendo API de CRUD completo com Postman",
   "main": "server.js",
   "type": "module",
   "scripts": {
