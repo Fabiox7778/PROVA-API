@@ -155,4 +155,70 @@ const deleteImovel = (req, res) => {
     });
 };
 
-export { getAllImoveis, getImoveisByld, createImovel, deleteImovel };
+const updateImovel = (req, res) => {
+    const id = parseInt(req.params.id);
+    const { tipo, endereco, area, quartos, preco, disponivel, proprietario } = req.body;
+
+    const tiposDeImoveis = ["Apartamento", "Casa de Condomínio", "Terreno", "Kitnet", "Chácara", "Sala Comercial", "Loft", "Casa de Vila", "Apartamento Duplex", "Galpão Industrial", "Apartamento na Praia", "Casa Térrea", "Studio", "Fazenda", "Apartamento Garden", "Sobrado", "Terreno Comercial", "Apartamento 1 por andar", "Casa de Campo", "Flat/Aparthotel", "Prédio Comercial", "Ponto Comercial (Loja)", "Cobertura Penthouse", "Sítio", "Apartamento Compacto"];
+     
+    if (isNaN(id)) {
+        return res.status(400).json({
+            success: false,
+            message: "O id deve ser válido"
+        });
+    };
+
+    const imovelExiste = imoveis.find(i => i.id === id);
+
+    if (!imovelExiste) {
+        return res.status(404).json({
+            success: false,
+            message: "Imóvel não existe"
+        });
+    };
+
+    if (preco > 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Preço deve ser um número maior que 0"
+        });
+    };
+
+    if (tipo) {
+        if (!tiposDeImoveis.includes(tipo)) {
+            return res.status(400).json({
+                success: false,
+                message: `O tipo "${tipo}" não é válido. Tipos permitidos: ${tiposDeImoveis.join(", ")}.`
+            });
+        };
+    };
+
+
+    const imoveisAtializados = imoveis.map(imovel =>
+        imovel.id === id
+            ? {
+                ...imovel,
+                ...(tipo && { tipo }),
+                ...(endereco && { endereco }),
+                ...(area && { area }),
+                ...(quartos && { quartos }),
+                ...(preco && { preco }),
+                ...(disponivel && { disponivel }),
+                ...(proprietario && { proprietario })
+            }
+            : imovel
+    );
+
+    imoveis.splice(0, imoveis.length, ...imoveisAtializados);
+
+    const imovelAtualizado = imoveis.find(i => i.id === id);
+
+    res.status(200).json({
+        success: true,
+        message: "imovel atualizado com sucesso",
+        imovel: imovelAtualizado
+    });
+
+};
+
+export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel };
