@@ -1,4 +1,4 @@
-import dados from "../models/dados";
+import dados from "../models/dados.js";
 const { imoveis } = dados;
 
 const getAllImoveis = (req, res) => {
@@ -15,14 +15,14 @@ const getImoveisByld = (req, res) => {
     const imovel = imoveis.find(m => m.id === id);
 
     if (!imovel) {
-        res.status(404).json({
+        return res.status(404).json({
             success: false,
-            message: `Imovél ${id} não encontrado`
+            message: `Imóvel ${id} não encontrado`
         });
-    };
+    }
 
     res.status(200).json({
-        total: imovel.length,
+        success: true,
         data: imovel
     });
 };
@@ -81,14 +81,14 @@ const createImovel = (req, res) => {
         });
     }
 
-    if (area > 0) {
+    if (area < 0) {
         return res.status(400).json({
             success: false,
             message: "Área deve ser um número maior que 0 metros quadrados"
         })
     } 
 
-    if (preco > 0) {
+    if (preco < 0) {
         return res.status(400).json({
             success: false,
             message: "Preço deve ser um número maior que 0"
@@ -145,7 +145,7 @@ const deleteImovel = (req, res) => {
         });
     };
 
-    const imovelFiltrado = imoveis.filter(m => m.id !== id);
+    const imovelFiltrado = imoveis.filter(m => m.id !== idParaApagar);
 
     imoveis.splice(0, imoveis.length, ...imovelFiltrado);
 
@@ -177,12 +177,19 @@ const updateImovel = (req, res) => {
         });
     };
 
-    if (preco > 0) {
+    if (area < 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Área deve ser um número maior que 0 metros quadrados"
+        })
+    } 
+
+    if (preco < 0) {
         return res.status(400).json({
             success: false,
             message: "Preço deve ser um número maior que 0"
-        });
-    };
+        })
+    }
 
     if (tipo) {
         if (!tiposDeImoveis.includes(tipo)) {
@@ -243,4 +250,46 @@ const getImoveisByTipo = (req, res) => {
     });
 };
 
-export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo };
+const getImoveisByEndereco = (req, res) => {
+    const { endereco } = req.params;
+
+    const filtrados = imoveis.filter(i => 
+        i.endereco.toLowerCase() === endereco.toLowerCase()
+    );
+
+    if (filtrados.length === 0) {
+        return res.status(404).json({
+            success: false,
+            message: `Nenhuma variável com o endereço "${endereco}" foi encontrada.`
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        total: filtrados.length,
+        data: filtrados
+    });
+};
+
+const getByQuartos = (req, res) => {
+    const { quartos } = req.params;
+
+    const filtrados = imoveis.filter(i => 
+        i.quartos === quartos
+    );
+
+    if (filtrados.length === 0) {
+        return res.status(404).json({
+            success: false,
+            message: `Nenhum imovel com "${quartos}" quartos foi encontrada.`
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        total: filtrados.length,
+        data: filtrados
+    });
+};
+
+export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo, getImoveisByEndereco, getByQuartos };
