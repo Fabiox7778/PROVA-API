@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllImoveis, getImoveisByld, createImovel } from "../controllers/imoveisControlers.js";
+import { getAllImoveis, getImoveisByld, createImovel, deleteImovel } from "../controllers/imoveisControlers.js";
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", getAllImoveis);
 router.get("/:id", getImoveisByld);
 router.post("/", createImovel);
-//router.delete("/:id", deleteImovel);
+router.delete("/:id", deleteImovel);
 //router.put("/:id", updateImovel);
 
 export default router; 
