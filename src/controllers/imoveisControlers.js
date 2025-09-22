@@ -221,4 +221,26 @@ const updateImovel = (req, res) => {
 
 };
 
-export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel };
+//Filtros específicas
+const getImoveisByTipo = (req, res) => {
+    const { tipo } = req.params;
+
+    const filtrados = imoveis.filter(i => 
+        i.tipo.toLowerCase() === tipo.toLowerCase()
+    );
+
+    if (filtrados.length === 0) {
+        return res.status(404).json({
+            success: false,
+            message: `Nenhuma variável do tipo "${tipo}" foi encontrada.`
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        total: filtrados.length,
+        data: filtrados
+    });
+};
+
+export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo };
