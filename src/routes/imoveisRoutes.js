@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo, getImoveisByEndereco, getByQuartos } from "../controllers/imoveisControlers.js";
+import { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo, getImoveisByEndereco, getByQuartos, getByFaixaPreco } from "../controllers/imoveisControlers.js";
 
 const router = express.Router();
 
@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/tipo/:tipo", getImoveisByTipo);
 router.get("/endereco/:endereco", getImoveisByEndereco);
 router.get("/quartos/:quartos", getByQuartos);
+router.get("/faixaPreco/:faixa", getByFaixaPreco);
 
 //Filtros CRUD:
 router.get("/", getAllImoveis);

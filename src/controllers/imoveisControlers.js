@@ -272,16 +272,14 @@ const getImoveisByEndereco = (req, res) => {
 };
 
 const getByQuartos = (req, res) => {
-    const { quartos } = req.params;
+    const quartos = parseInt(req.params.quartos); 
 
-    const filtrados = imoveis.filter(i => 
-        i.quartos === quartos
-    );
+    const filtrados = imoveis.filter(i => i.quartos === quartos);
 
     if (filtrados.length === 0) {
         return res.status(404).json({
             success: false,
-            message: `Nenhum imovel com "${quartos}" quartos foi encontrada.`
+            message: `Nenhum imóvel com ${quartos} quartos foi encontrado.`
         });
     }
 
@@ -292,4 +290,43 @@ const getByQuartos = (req, res) => {
     });
 };
 
-export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo, getImoveisByEndereco, getByQuartos };
+const getByFaixaPreco = (req, res) => {
+    const { faixa } = req.params; // "ate200", "200a500", "500mais"
+    let filtrados = [];
+
+    switch (faixa) {                                  //melhor maneira que pensei para fazer as faixas, nao consegui fazer um ate qualquer numero.
+        case "ate200":
+            filtrados = imoveis.filter(i => i.preco <= 200000);
+            break;
+
+        case "200a500":
+            filtrados = imoveis.filter(i => i.preco > 200000 && i.preco <= 500000);
+            break;
+
+        case "500mais":
+            filtrados = imoveis.filter(i => i.preco > 500000);
+            break;
+
+        default:
+            return res.status(400).json({
+                success: false,
+                message: "Faixa de preço inválida. Use: ate200 | 200a500 | 500mais"
+            });
+    }
+
+    if (filtrados.length === 0) {
+        return res.status(404).json({
+            success: false,
+            message: `Nenhum imóvel encontrado na faixa "${faixa}".`
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        faixa,
+        total: filtrados.length,
+        data: filtrados
+    });
+};
+
+export { getAllImoveis, getImoveisByld, createImovel, deleteImovel, updateImovel, getImoveisByTipo, getImoveisByEndereco, getByQuartos, getByFaixaPreco };
